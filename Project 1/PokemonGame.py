@@ -21,12 +21,19 @@ Element_Effectivness = {
     (GRASS, FIRE): 0.7       # Grass is weak against Fire
 }
 
-# Base Character Class (for all characters)
-class Character:
+# Define Player Class
+class Player():
+    def __init__(self, name, gender):
+        self.name = name
+        self.gender = gender
+
+
+# Pokemon Class (for all Pokemon)
+class Pokemon():
     def __init__(self, name, health, health_cap, damage, element):
         self.name = name
         self.health = health
-        self.health_cap = health_cap          ## To avoid over healing and for calculations (run)
+        self.health_cap = health_cap          ## To avoid over healing and used for calculations (run)
         self.damage = damage
         self.element = element
 
@@ -57,72 +64,35 @@ class Character:
         print(f"{self.name}'s health is {self.health:.2f}.")
 
     def Run(self):                                                        ## Random chance to get away
-        Probability = (self.health_cap - self.health) / self.health_cap   ## The less health, the better chance to get away    Between 1 and 0       
+        Probability = (self.health_cap - self.health) / self.health_cap   ## The less health, the better chance to get away    
 
         if Probability > random.random():                                 ## random.random() returns random float between 1 and 0
-            print("Got away safely\n")
+            print(f"{self.name} got away safely\n")
             return True
         else:
-            print("Couldn't get away\n")
+            print(f"{self.name} couldn't get away\n")
             return False
     
     def Fainted(self):
-        if self.health <= 0:                           ## Easily check if character fainted
+        if self.health <= 0:                           ## Check if Pokemon fainted
             self.health = 0
             print(f"{self.name} fainted")
             return True
-        
-# Define Player Classes - Inherits from Character
-class Player(Character):
-    def __init__(self, name, health, health_cap, damage, element):
-        super().__init__(name, health, health_cap, damage, element)
+        return False
+    
 
-# Define playable pokemon - Inherits from Player
-class Pikachu(Player):
-    def __init__(self, name):
-        super().__init__(name, 60, 60, 35, ELECTRIC)
-
-class Squirtle(Player):
-    def __init__(self, name):
-        super().__init__(name, 70, 70, 20, WATER)
-
-class Charmander(Player):
-    def __init__(self, name):
-        super().__init__(name, 70, 70, 20, FIRE)
-
-class Bulbasaur(Player):
-    def __init__(self, name):
-        super().__init__(name, 70, 70, 20, GRASS)
-
-# Define Enemy Classes - Inherits from Character
-class Enemy(Character):
-    def __init__(self, name, health, health_cap, damage, element):
-        super().__init__(name, health, health_cap, damage, element)
-
-    def Run(self):                                                         ## Overwrite Run function for enemies to not print anything
-        Probability = (self.health_cap - self.health) / self.health_cap
-
-        if Probability > random.random():
-            return True
-        else:
-            return False
-        
-#Define enemy Pokemon - Inherits from Enemy
-class Rattatta(Enemy):
-    def __init__(self, name):
-        super().__init__(name, 50, 50, 35, NORMAL)
-
-class Poliwhirl(Enemy):
-    def __init__(self, name):
-        super().__init__(name, 65, 50, 20, WATER)
-
-class Rapidash(Enemy):
-    def __init__(self, name):
-        super().__init__(name, 65, 65, 20, FIRE)
-
-class Victoreebel(Enemy):
-    def __init__(self, name):
-        super().__init__(name, 65, 65, 20, GRASS)
+##Initialize some Pokemon
+Bulbasaur = Pokemon("Bulbasaur", 45, 45, 49, GRASS)
+Squirtle = Pokemon("Squirtle", 44, 44, 48, WATER)
+Charmander = Pokemon("Charmander", 39, 39, 52, FIRE)
+Pikachu = Pokemon("Pikachu", 35, 35, 55, ELECTRIC)
+Jigglypuff = Pokemon("Jigglypuff", 115, 115, NORMAL)
+Meowth = Pokemon("Meowth", 40, 40, NORMAL)
+Psyduck = Pokemon("Psyduck", 50, 50, WATER)
+Eevee = Pokemon("Eevee", 55, 55, NORMAL)
+Growlithe = Pokemon("Growlithe", 55, 55, FIRE)
+Oddish = Pokemon("Oddish", 45, 45, GRASS)
+Bellsprout = Pokemon("Bellsprout", 50, 50, GRASS)
 
 
 def Battle(Player, Enemy):
@@ -133,16 +103,12 @@ def Battle(Player, Enemy):
 
         if Decision.capitalize == "Attack":
             Player.Attack(Enemy)               ## Use Attack from parent Character class
-            if Enemy.Fainted():
-                flag = False
-            else:
-                Turn = 0
+            flag = not(Enemy.Fainted())
+            Turn = 0
 
         elif Decision.capitalize == "Run":     ## Use Run from parent Character class
-            if Player.Run():
-                flag = False
-            else:
-                Turn = 0
+            flag = Player.Run()
+            Turn = 0
 
         else:
             print("Incorrect Input, Try again")
@@ -151,12 +117,12 @@ def Battle(Player, Enemy):
             enemy_choice = random.random()     ##Random chance for enemy to Attack or run
 
             if enemy_choice > 0.90:            ## 10% chance to decide to run
-                if Enemy.Run():
-                    flag = False
+                flag = not Enemy.Run()
+                Turn = 1
             else:
                 Enemy.Attack(Player)           ## 90% chance to attack
-                if Player.Fainted():
-                    flag = False
+                flag = not Player.Fainted()
+                Turn = 1
 
 
 
