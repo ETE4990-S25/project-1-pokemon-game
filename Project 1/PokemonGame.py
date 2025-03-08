@@ -30,11 +30,11 @@ class Player():
 
 # Pokemon Class (for all Pokemon)
 class Pokemon():
-    def __init__(self, name, health, health_cap, damage, element):
+    def __init__(self, name, health, health_cap, moves, element):
         self.name = name
         self.health = health
         self.health_cap = health_cap          ## To avoid over healing and used for calculations (run)
-        self.damage = damage
+        self.damage = moves
         self.element = element
 
     def get_elemental_multiplier(self, target_element):
@@ -82,47 +82,47 @@ class Pokemon():
     
 
 ##Initialize some Pokemon
-Bulbasaur = Pokemon("Bulbasaur", 45, 45, 49, GRASS)
-Squirtle = Pokemon("Squirtle", 44, 44, 48, WATER)
-Charmander = Pokemon("Charmander", 39, 39, 52, FIRE)
-Pikachu = Pokemon("Pikachu", 35, 35, 55, ELECTRIC)
-Jigglypuff = Pokemon("Jigglypuff", 115, 115, NORMAL)
-Meowth = Pokemon("Meowth", 40, 40, NORMAL)
-Psyduck = Pokemon("Psyduck", 50, 50, WATER)
-Eevee = Pokemon("Eevee", 55, 55, NORMAL)
-Growlithe = Pokemon("Growlithe", 55, 55, FIRE)
-Oddish = Pokemon("Oddish", 45, 45, GRASS)
-Bellsprout = Pokemon("Bellsprout", 50, 50, GRASS)
+Bulbasaur = Pokemon("Bulbasaur", 45, 45,     {1:("Tackle", 30), 2:("Vine Whip", 40)}, GRASS)
+Squirtle = Pokemon("Squirtle", 44, 44,       {1:("Tackle", 30), 2:("Water Jet", 40)}, WATER)
+Charmander = Pokemon("Charmander", 39, 39,   {1:("Tackle", 30), 2:("Ember", 40)},     FIRE)
+Pikachu = Pokemon("Pikachu", 35, 35,         {1:("Tackle", 30), 2:("Spark", 40)},     ELECTRIC)
+Jigglypuff = Pokemon("Jigglypuff", 115, 115, {1:("Tackle", 30), 2:("Something", 40)}, NORMAL)
+Meowth = Pokemon("Meowth", 40, 40,           {1:("Tackle", 30), 2:("Scratch", 40)}, NORMAL)
+Psyduck = Pokemon("Psyduck", 50, 50,         {1:("Tackle", 30), 2:("Water Jet", 40)}, WATER)
+Eevee = Pokemon("Eevee", 55, 55,             {1:("Tackle", 30), 2:("Growl", 40)}, NORMAL)
+Growlithe = Pokemon("Growlithe", 55,         {1:("Tackle", 30), 2:("Growl", 40)}, FIRE)
+Oddish = Pokemon("Oddish", 45, 45,           {1:("Tackle", 30), 2:("Vine Whip", 40)},  GRASS)
+Bellsprout = Pokemon("Bellsprout", 50, 50,   {1:("Tackle", 30), 2:("Vine Whip", 40)}, GRASS)
 
 
-def Battle(Player, Enemy):
+def Battle(Player, Enemy):   ### Rework to call class methods for 
     flag = True
-    Turn = 1
+    Turn = True
     while flag:
         Decision = input("Attack or Run?")     ## Decide wheather to fight or run
 
         if Decision.capitalize == "Attack":
             Player.Attack(Enemy)               ## Use Attack from parent Character class
             flag = not(Enemy.Fainted())
-            Turn = 0
+            Turn = False
 
         elif Decision.capitalize == "Run":     ## Use Run from parent Character class
             flag = Player.Run()
-            Turn = 0
+            Turn = False
 
         else:
             print("Incorrect Input, Try again")
         
-        if Turn == 0:                          ## Enemies turn
+        if Turn == False & flag == True:                          ## Enemies turn
             enemy_choice = random.random()     ##Random chance for enemy to Attack or run
 
             if enemy_choice > 0.90:            ## 10% chance to decide to run
                 flag = not Enemy.Run()
-                Turn = 1
+                Turn = True
             else:
                 Enemy.Attack(Player)           ## 90% chance to attack
                 flag = not Player.Fainted()
-                Turn = 1
+                Turn = True
 
 
 
