@@ -9,6 +9,7 @@
 #save menu w/ json files (allow progress to be kept when file is closed)
 
 import random
+import itertools
 
 # Define Elements (powers for characters)
 ELECTRIC = "electric"
@@ -55,21 +56,50 @@ class Item:
             print(f"{pokemon.name} used {self.name}!")
 
     def apply_effect(self, pokemon):
+
         if self.effect_type == 'heal':
             pokemon.health += self.effect_value
+
             if pokemon.health > pokemon.health_cap:
                 pokemon.health = pokemon.health_cap  # Prevent health from exceeding the max limit.
             print(f"{pokemon.name} healed for {self.effect_value} health!")
+
+
         elif self.effect_type == 'boost_attack':
             pokemon.damage += self.effect_value
             print(f"{pokemon.name}'s attack increased by {self.effect_value}!")
-                  
+
+
+        elif self.effect_type == 'catch':
+            if pokemon in Player.pokemon:        ## Check if player already has that pokemon
+                print(f"You already have a {pokemon.name}")
+
+            elif self.effect_value > random.random():  ## PokeBall effectiveness
+                Player.pokemon.append(pokemon)
+                print(f"You caught a wild {pokemon.name}!")
+
+            else:
+                print(f"The wild {pokemon.name} broke free!")
+
+##innit some items
+PokeBall = Item("Poke Ball", "catch", 0.6, stackable=True, quantity=10)
+GreatBall = Item("Great Ball", "catch", 0.7, stackable=True, quantity=10)
+UltraBall = Item("Ultra Ball", "catch", 0.8, stackable=True, quantity=10)
+MasterBall = Item("Master Ball", "catch", 1, stackable=True, quantity=10)
+
+Potion = Item("Potion", "heal", 20, stackable=True, quantity=10)
+SuperPotion = Item("Super Potion", "heal", 40, stackable=True, quantity=10)
+HyperPotion = Item("Hyper Potion", "heal", 60, stackable=True, quantity=10)
+MaxPotion = Item("Max Potion", "heal", 100, stackable=True, quantity=10)
+
+XAttack = Item("X Attack", "boost_attack", 10)
 # Define Player class
 class Player():
     def __init__(self, name, gender):
         self.name = name
         self.gender = gender
         self.inventory = []
+        self.pokemon = []
 
     def add_item(self, item):
         self.inventory.append(item)
@@ -215,10 +245,9 @@ def TallGrass(Player):
     flag = True
     while flag:
 
-        Walk = input("Walk into the tall grass? (yes/no)")
+        Walk = input("Walk into the tall grass? (yes/no)").capitalize().strip()
 
         if Walk == "Yes":
-            # 10% chance to encounter a wild Pokemon
             if random.random() > 0.9:  # 10% chance to encounter a Pokémon
                 # Randomly select a wild Pokémon
                 wild_pokemon = random.choice(wild_pokemon_list)
@@ -236,3 +265,6 @@ def TallGrass(Player):
             break  # Exit the loop if the player doesn't want to walk into the grass
         else:
             print("Please answer with 'yes' or 'no'.")
+
+def AutoWalk(Player):
+    itertools.repeat(TallGrass(Player), 10) ##Walk in grass 10 times
