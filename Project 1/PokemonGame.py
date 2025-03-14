@@ -95,12 +95,21 @@ MaxPotion = Item("Max Potion", "heal", 100, stackable=True, quantity=10)
 XAttack = Item("X Attack", "boost_attack", 10)
 # Define Player class
 class Player():
-    def __init__(self, name, gender):
+
+    def __init__(self, name, gender, inventory = [], pokemon = []):
         self.name = name
         self.gender = gender
-        self.inventory = []
-        self.pokemon = []
+        self.inventory = inventory
+        self.pokemon = pokemon
 
+    def to_dict(self):      ## In order to save data, Cannot save class instance itself to json
+        return {
+            "name": self.name,
+            "gender": self.gender,
+            "bag": self.inventory,
+            "team": self.pokemon
+        }
+    
     def add_item(self, item):
         self.inventory.append(item)
         print(f"{item.name} has been added to your backpack.")
@@ -126,9 +135,18 @@ class Pokemon():
         self.name = name
         self.health = health
         self.health_cap = health_cap          ## To avoid over healing and used for calculations (run)
-        self.damage = moves
+        self.moves = moves
         self.element = element
 
+    def to_dict(self):
+        return {
+            "name": self.name,
+            "health": self.health,
+            "health_cap": self.health_cap,
+            "moves": self.moves,
+            "element": self.element
+        }
+    
     def get_elemental_multiplier(self, target_element):
         if (self.element, target_element) in element_effectiveness:
             return element_effectiveness[(self.element, target_element)]
@@ -182,14 +200,14 @@ Jigglypuff = Pokemon("Jigglypuff", 115, 115, {1:("Tackle", 30), 2:("Something", 
 Meowth = Pokemon("Meowth", 40, 40,           {1:("Tackle", 30), 2:("Scratch", 40)}, NORMAL)
 Psyduck = Pokemon("Psyduck", 50, 50,         {1:("Tackle", 30), 2:("Water Jet", 40)}, WATER)
 Eevee = Pokemon("Eevee", 55, 55,             {1:("Tackle", 30), 2:("Growl", 40)}, NORMAL)
-Growlithe = Pokemon("Growlithe", 55,         {1:("Tackle", 30), 2:("Growl", 40)}, FIRE)
+Growlithe = Pokemon("Growlithe", 55, 55,     {1:("Tackle", 30), 2:("Growl", 40)}, FIRE)
 Oddish = Pokemon("Oddish", 45, 45,           {1:("Tackle", 30), 2:("Vine Whip", 40)},  GRASS)
 Bellsprout = Pokemon("Bellsprout", 50, 50,   {1:("Tackle", 30), 2:("Vine Whip", 40)}, GRASS)
 
 # List of possible wild Pokemon that can appear
 wild_pokemon_list = [Bulbasaur, Squirtle, Charmander, Pikachu, Jigglypuff, Meowth, Psyduck, Eevee, Growlithe, Oddish, Bellsprout]
 
-def Battle(Player, Enemy):
+def Battle(Player, Pokemon, Enemy):
     """The battle function between the player and enemy Pokémon."""
     flag = True
     Turn = True
@@ -207,13 +225,13 @@ def Battle(Player, Enemy):
             continue
         
         if decision == 1:  # Attack
-            Player.Attack(Enemy)  # Use Attack method from Player's Pokemon
+            Pokemon.attack(Enemy)  # Use Attack method from Player's Pokemon
             flag = not Enemy.Fainted()  # Check if the enemy has fainted
             Turn = False
 
         elif decision == 2:  # Item
             # Show the player inventory and let the player choose an item to use
-            if not Player.items:
+            if not Player.inventory:
                 print("Your backpack is empty!")
             else:
                 Player.display_inventory()  # Display all items in inventory
@@ -222,7 +240,7 @@ def Battle(Player, Enemy):
             Turn = False
         
         elif decision == 3:  # Run
-            flag = Player.Run()  # Use Run method from Player's Pokemon
+            flag = Pokemon.Run()  # Use Run method from Player's Pokemon
             Turn = False
         
         else:
@@ -241,7 +259,7 @@ def Battle(Player, Enemy):
                 flag = not Pokemon.fainted()  # Check if player has fainted
                 Turn = True
 
-def TallGrass(Player):
+def TallGrass(Player, Pokemon):
     flag = True
     while flag:
 
@@ -254,7 +272,7 @@ def TallGrass(Player):
                 print(f"A wild {wild_pokemon.name} appeared!")
 
                 # Start a battle with the selected wild Pokémon
-                Battle(Player, wild_pokemon)
+                Battle(Player, Pokemon, wild_pokemon)
 
                 # Break out of the loop after the battle
                 break
@@ -268,3 +286,8 @@ def TallGrass(Player):
 
 def AutoWalk(Player):
     itertools.repeat(TallGrass(Player), 10) ##Walk in grass 10 times
+
+def PokeCenter(Player):
+
+    for pokemon in Player.pokemon:
+        pokemon.health = pokemon.health_cap ##Set all pokemon health to max
