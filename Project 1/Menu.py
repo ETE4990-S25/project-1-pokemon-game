@@ -37,9 +37,9 @@ def Open():        ## Need to check save to see how many slots available
     
     print("Choose from the following:")
     temp = []
-    for i in range(len(PG.wild_pokemon_list)):
-        print(PG.wild_pokemon_list[i].name)
-        temp.append(PG.wild_pokemon_list[i].name) ## temp list of pokemon names to compare later
+    for i in range(len(PG.chosen_pokemon)):
+        print(PG.chosen_pokemon[i].name)
+        temp.append(PG.chosen_pokemon[i].name) ## temp list of pokemon names to compare later
 
     FirstPokemon = input("Choose a pokemon from the list:")
 
@@ -121,6 +121,7 @@ def Load():
                     GameData[option]["team"][i]['element']
                 )
 
+            CurrentPlayer.pokemon = player_pokemon_dict ## assign pokemon to player
             flag = False
             Menu(CurrentPlayer)  ## Call to start Game
         else:
@@ -167,6 +168,7 @@ def Menu(CurrentPlayer):      ## Show what attacks available, option to run, che
             print("Your Pokemon have been fully healed!!\n")
 
         elif option == '4':
+            print(player_pokemon_dict)
             MainPokemon = PG.SwapPokemon(player_pokemon_dict)
 
         elif option == '5':
