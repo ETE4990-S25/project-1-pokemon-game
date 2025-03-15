@@ -6,6 +6,8 @@ import os
 DATA = "Data.json" ## The file
 global GameData      ## What is being saves to the file
 GameData = {}
+global player_pokemon_dict
+player_pokemon_dict = {}
 
 def LoadData():
     if os.path.exists(DATA) and os.path.getsize(DATA) > 0:
@@ -27,6 +29,7 @@ def Start():
 def Open():        ## Need to check save to see how many slots available
     global GameData
     global SaveSlot
+    global player_pokemon_dict
     print("\n---Welcome to Pokemon---\n")
 
     Name = input("What is your name?").capitalize()
@@ -36,7 +39,7 @@ def Open():        ## Need to check save to see how many slots available
     temp = []
     for i in range(len(PG.wild_pokemon_list)):
         print(PG.wild_pokemon_list[i].name)
-        temp.append(PG.wild_pokemon_list[i].name)
+        temp.append(PG.wild_pokemon_list[i].name) ## temp list of pokemon names to compare later
 
     FirstPokemon = input("Choose a pokemon from the list:")
 
@@ -47,6 +50,7 @@ def Open():        ## Need to check save to see how many slots available
         if FirstPokemon == PG.wild_pokemon_list[i].name:
             PokemonClassInstance = PG.wild_pokemon_list[i]      ## assign class instance of chosen pokemon 
             PokemonDict = PokemonClassInstance.to_dict()        ## Change to dictionary so we have the ability to save
+            player_pokemon_dict[0] = PokemonClassInstance       ## Players dictionary of pokemon class instances  ## First pokemon
 
     Player = PG.Player(Name, Gender, pokemon=[PokemonDict]) ## initialize player
 
@@ -76,6 +80,9 @@ def Open():        ## Need to check save to see how many slots available
 
 def Load():
     global GameData
+    global SaveSlot
+    global player_pokemon_dict
+    
     GameData = LoadData()
 
     if GameData == {}:          ## check if empty dictionary or empty space? " " {}?
@@ -88,7 +95,11 @@ def Load():
     for Slot, Data in GameData.items():   ## Key, value in json
         print(f"{Slot} : {Data['name']}")
 
+    flag = True
+
+    while(flag):
         option = input()       ## choose which to open
+        SaveSlot = option
         if option in GameData: 
             print(f"\nLoading {GameData[option]['name']}'s save")
 
@@ -99,6 +110,18 @@ def Load():
                 GameData[option]['team']
                 )  ##reinnit player class (name, gender, inventory, pokemon)
             
+            for i in range(len(GameData[option]["team"])): ##Length of team list ## How many pokemon to innitialize
+
+                player_pokemon_dict[i] = PG.Pokemon(   ## A dictionary of all player pokemon reinnitialized
+                    
+                    GameData[option]["team"][i]['name'],
+                    GameData[option]["team"][i]['health'],
+                    GameData[option]["team"][i]['health_cap'],
+                    GameData[option]["team"][i]['moves'],
+                    GameData[option]["team"][i]['element']
+                )
+
+            flag = False
             Menu(CurrentPlayer)  ## Call to start Game
         else:
             print("Incorrect file number")
@@ -108,47 +131,48 @@ def Load():
     ### Read how many files in JSON and ouput names and numbers
 
 def Save(Player):
-    print("\n---Saving Game---")
-    SaveData(Player)
-    print("---Game Saved---")
-
-def Menu(Player):      ## Show what attacks available, option to run, check inventory, switch pokemon, Pokemon on field
     global GameData
     global SaveSlot
 
-    MainPokemon = GameData[SaveSlot]["team"][0] ## First pokemon in team list
+    print("\n---Saving Game---")
+    GameData[SaveSlot] = Player.to_dict()
+    SaveData(GameData)
+    print("---Game Saved---")
+
+def Menu(CurrentPlayer):      ## Show what attacks available, option to run, check inventory, switch pokemon, Pokemon on field
+    global GameData
+    global SaveSlot
+    global player_pokemon_dict
+
+    MainPokemon = player_pokemon_dict[0] ## First pokemon in team list by default
     Play = True
     while(Play):
         print("\n\n\n--------------------------------------")
         print("1. Walk into grass       2. Check Bag")
         print("3. Go to PokeCenter      4. Swap Main Pokemon")
         print("5. Save Game             6. Exit Game")
-        option = int(input())
+        option = input()
 
-        if option not in range(1,5):
+        if option not in ['1','2','3','4','5','6']:
             print("\nInvalid option")
 
-        elif option == 1:
-            PG.TallGrass(Player)
+        elif option == '1':
+            PG.TallGrass(CurrentPlayer, MainPokemon)
 
-        elif option == 2:
-            Player.display_inventory()
+        elif option == '2':
+            CurrentPlayer.display_inventory()
 
-        elif option == 3:
-            PG.PokeCenter(Player)
+        elif option == '3':
+            player_pokemon_dict = PG.PokeCenter(player_pokemon_dict)
+            print("Your Pokemon have been fully healed!!\n")
 
-        elif option == 4:
-            print("\nThe pokemon you have right now are:")
+        elif option == '4':
+            MainPokemon = PG.SwapPokemon(player_pokemon_dict)
 
-            for pokemon in GameData[SaveSlot]["team"]:
-                print(f"{pokemon}. {pokemon['name']}")
+        elif option == '5':
+            Save(CurrentPlayer)
 
-            choice = int(input("Choose a pokemon to pick as your main one")) + 1
-            MainPokemon = GameData[SaveSlot]["team"][choice]
-
-        elif option == 5:
-            Save()
-
-        elif option == 6:
+        elif option == '6':
             Play = False
-            Save()   ##Just in case 
+            Save(CurrentPlayer)   ##Just in case 
+            print("Thanks for playing!")

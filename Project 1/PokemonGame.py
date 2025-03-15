@@ -93,6 +93,8 @@ HyperPotion = Item("Hyper Potion", "heal", 60, stackable=True, quantity=10)
 MaxPotion = Item("Max Potion", "heal", 100, stackable=True, quantity=10)
 
 XAttack = Item("X Attack", "boost_attack", 10)
+
+
 # Define Player class
 class Player():
 
@@ -219,17 +221,17 @@ def Battle(Player, Pokemon, Enemy):
         print("3) Run")
         
         try:
-            decision = int(input("Enter the number of the action you desire:"))  # Get the player's choice as a number
+            decision = input("Enter the number of the action you desire:").strip()  # Get the player's choice as a number
         except ValueError:
             print("Not an option. Enter a number from 1-3.")
             continue
         
-        if decision == 1:  # Attack
+        if decision == '1':  # Attack
             Pokemon.attack(Enemy)  # Use Attack method from Player's Pokemon
             flag = not Enemy.Fainted()  # Check if the enemy has fainted
             Turn = False
 
-        elif decision == 2:  # Item
+        elif decision == '2':  # Item
             # Show the player inventory and let the player choose an item to use
             if not Player.inventory:
                 print("Your backpack is empty!")
@@ -239,7 +241,7 @@ def Battle(Player, Pokemon, Enemy):
                 Player.use_item(item_name, Enemy)  # Use item on the enemy or player’s Pokémon
             Turn = False
         
-        elif decision == 3:  # Run
+        elif decision == '3':  # Run
             flag = Pokemon.Run()  # Use Run method from Player's Pokemon
             Turn = False
         
@@ -287,7 +289,22 @@ def TallGrass(Player, Pokemon):
 def AutoWalk(Player):
     itertools.repeat(TallGrass(Player), 10) ##Walk in grass 10 times
 
-def PokeCenter(Player):
+def PokeCenter(pokemon_dict):
 
-    for pokemon in Player.pokemon:
-        pokemon.health = pokemon.health_cap ##Set all pokemon health to max
+    for i in pokemon_dict:
+        pokemon_dict[i].health = pokemon_dict[i].health_cap ##Set all pokemon health to max
+    
+    return pokemon_dict
+
+
+def SwapPokemon(pokemon_dict):
+    print("\nThe pokemon you have right now are:")
+
+    for i in range(len(pokemon_dict)):
+                print(f"{i+1}. {pokemon_dict[i].name}")
+    while(True):
+        choice = int(input("\nChoose a pokemon to pick as your main one")) - 1
+        if choice not in pokemon_dict:
+            print("invalid input")
+        else:
+            return pokemon_dict[choice]
