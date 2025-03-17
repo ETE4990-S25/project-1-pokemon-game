@@ -1,13 +1,3 @@
-#inventory management (backpack)
-    #items that stack
-    #single use items
-    #multi use items
-#inventory display
-#item details
-#player selection
-#game play main function
-#save menu w/ json files (allow progress to be kept when file is closed)
-
 import random
 import itertools
 import time
@@ -47,8 +37,10 @@ class Item:
 
             if self.quantity > 0:
                 print(f"{pokemon.name} used {self.name}!")
-                if player: self.apply_effect(pokemon, player) ## only for pokeballs since we need to add captured pokemon to player list
-                else: self.apply_effect(pokemon)
+                if player: 
+                    self.apply_effect(pokemon, player) ## only for pokeballs since we need to add captured pokemon to player list
+                else: 
+                    self.apply_effect(pokemon)
                 self.quantity -= 1
                 
                 if self.quantity == 0:
@@ -117,7 +109,12 @@ Pokeball_list = [PokeBall, GreatBall, UltraBall, MasterBall]
 # Define Player class
 class Player():
 
-    def __init__(self, name, gender, inventory = [], pokemon = {}):
+    def __init__(self, name, gender, inventory=None, pokemon=None):
+        if inventory is None:
+            inventory = []
+        if pokemon is None:
+            pokemon = {}
+
         self.name = name
         self.gender = gender
         self.inventory = inventory
@@ -234,7 +231,7 @@ class Pokemon():
             return False
     
     def fainted(self):
-        if self.health <= 0:                           ## Check if Pokemon fainted
+        if self.health <= 0:   ## Check if Pokemon fainted
             self.health = 0
             print(f"{self.name} fainted")
             return True
@@ -364,7 +361,7 @@ def TallGrass(Player, Pokemon):
 
 def Walks(Player,Pokemon):
 
-    if random.random() > 0.9:  # 10% chance to encounter a Pokémon
+    if random.random() < 0.1:  # 10% chance to encounter a Pokémon
         # Randomly select a wild Pokémon
         wild_pokemon = random.choice(wild_pokemon_list)
         print(f"A wild {wild_pokemon.name} appeared!")
@@ -372,7 +369,7 @@ def Walks(Player,Pokemon):
                 # Start a battle with the selected wild Pokémon
         Battle(Player, Pokemon, wild_pokemon)
 
-    elif random.random() > 0.75:  # 25% to find item
+    elif random.random() < 0.25:  # 25% to find item
         k = random.choices([1,2], weights = [85,15])[0] ##Chance to find two items
         found_item = random.choices(item_list, weights = item_chance, k = k)[0]  ## random item depending on how rare
         print(f"You found {k} {found_item.name}\n")
