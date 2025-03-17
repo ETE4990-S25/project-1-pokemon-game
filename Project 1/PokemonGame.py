@@ -31,12 +31,20 @@ class Item:
         self.stackable = stackable
         self.quantity = quantity
 
+    def to_dict(self):
+        return {
+            "name": self.name,
+            "effect": self.effect_value,
+            "stack": self.stackable,
+            "amount": self.quantity
+        }
+
     def use(self, pokemon, player = None):
 
         if self.stackable:
 
             if self.quantity > 0:
-                print(f"{pokemon.name} used {self.name}!")
+                print(f"You used a {self.name} on {pokemon.name}!")
                 if player: 
                     self.apply_effect(pokemon, player) ## only for pokeballs since we need to add captured pokemon to player list
                 else: 
@@ -75,7 +83,7 @@ class PokeBalls(Item):
         if self.effect_value > random.random():  ## PokeBall effectiveness
             Count()
             convert_to_player_pokemon = Pokemon(pokemon.name, pokemon.health, pokemon.health_cap, pokemon.moves, pokemon.element)  ## in order to choose moves of pokemon
-            player.pokemon[int(f"{len(player.pokemon)}")] = convert_to_player_pokemon
+            player.pokemon.append(convert_to_player_pokemon)
             print(f"You caught a wild {pokemon.name}!")
 
         else:
@@ -105,15 +113,16 @@ global item_chance
 item_list = [PokeBall, GreatBall, UltraBall, MasterBall, Potion, SuperPotion, HyperPotion, MaxPotion]
 item_chance = [100, 80, 60, 5, 100, 70, 50, 20] ## Masterballs are rare while pokeballs and potions are common
 Pokeball_list = [PokeBall, GreatBall, UltraBall, MasterBall]
-
+Pokeball_names = ["Poke Ball", "Great Ball", "Ultra Ball", "Master Ball"]
+Potion_names = ["Potion", "Super Potion", "Hyper Potion", "Max Potion"]
 # Define Player class
 class Player():
 
     def __init__(self, name, gender, inventory=None, pokemon=None):
         if inventory is None:
-            inventory = []
+            inventory = [] ## key(item) value(quantity)
         if pokemon is None:
-            pokemon = {}
+            pokemon = []
 
         self.name = name
         self.gender = gender
@@ -121,17 +130,19 @@ class Player():
         self.pokemon = pokemon
 
     def to_dict(self):      ## In order to save data, Cannot save class instance itself to json
+        print(self.inventory)
+        print(self.pokemon)
         return {
             "name": self.name,
             "gender": self.gender,
-            "bag": self.inventory,
-            "team": self.pokemon
+            "bag": [item.to_dict() for item in self.inventory],
+            "team": [pokemon.to_dict() for pokemon in self.pokemon]
         }
     
-    def add_item(self, item):
+    def add_item(self, item, amount):
 
-        if item.name in self.inventory:
-            self.inventory[item.name].quantity += 1
+        if item in self.inventory:
+            item.quantity += amount
         else:
             self.inventory.append(item)
         print(f"{item.name} has been added to your backpack.")
@@ -143,9 +154,10 @@ class Player():
             for item in self.inventory:
                 if item.name.lower() == item_name.lower():
                     item_found = True
-                    if item in Pokeball_list: ## if item is a pokeball, also pass in the player
+                    if item.name in Pokeball_names: ## if item is a pokeball, also pass in the player
                         if item.use(pokemon, self):
                             self.inventory.remove(item)
+                            
                     else:
                         if item.use(pokemon):  ## Just pass pokemon for all other items
                             self.inventory.remove(item)
@@ -312,14 +324,31 @@ def Battle(Player, Pokemon, Enemy):
             if not Player.inventory:
                 print("Your backpack is empty!")
             else:
+                
                 Player.display_inventory()  # Display all items in inventory
                 item_name = input("Name the item you want to use ")
-                Player.use_item(item_name, Enemy)  # Use item on the enemy or player’s Pokémon
-            Turn = False
+                    
+                if item_name in Pokeball_names:
+                    player_pokemon_count = len(Player.pokemon)
+                    Player.use_item(item_name, Enemy) ## use on enemy if pokeball
+
+                    if player_pokemon_count != len(Player.pokemon): ##Check if player caught another pokemon
+                        Turn = True
+                        flag = False  ## Wild pokemon doesnt fight and leave battle functino
+                    else:
+                        Turn = False  ## Not caught, continue battle
+                        
+                elif item_name in Potion_names:
+                    Player.use_item(item_name, Pokemon) ## use on players pokemon
+                    Turn = False
+                
+                 
         
         elif decision == '3':  # Run
-            flag = Pokemon.run()  # Use Run method from Player's Pokemon
-            Turn = False
+            if Pokemon.run():  # Use Run method from Player's Pokemon
+                flag = False
+            else:
+                Turn = False
 
         elif decision == '4': # Swap Pokemon
             print(Player.pokemon)
@@ -359,7 +388,7 @@ def TallGrass(Player, Pokemon):
             print("Invalid input")
 
 
-def Walks(Player,Pokemon):
+def Walks(Player, Pokemon):
 
     if random.random() < 0.1:  # 10% chance to encounter a Pokémon
         # Randomly select a wild Pokémon
@@ -373,19 +402,19 @@ def Walks(Player,Pokemon):
         k = random.choices([1,2], weights = [85,15])[0] ##Chance to find two items
         found_item = random.choices(item_list, weights = item_chance, k = k)[0]  ## random item depending on how rare
         print(f"You found {k} {found_item.name}\n")
-        Player.add_item(found_item)     ## add to inventory
+        Player.add_item(found_item, k)     ## add to inventory
 
     else:
         print("You didn't encounter any Pokémon this time.")
 
 
-def AutoWalk(Player, Pokemon):
+def AutoWalk(player, Pokemon):
     for i in range(10):
-        Walks(Player, Pokemon)
+        Walks(player, Pokemon)
 
 def PokeCenter(pokemon_list):
 
-    for i in pokemon_list:
+    for i in range(len(pokemon_list)):
         pokemon_list[i].health = pokemon_list[i].health_cap ##Set all pokemon health to max
     
     return pokemon_list
@@ -402,3 +431,16 @@ def SwapPokemon(pokemon_list):
             print("invalid input")
         else:
             return pokemon_list[choice]
+        
+def CheckPokemonAlive(player):
+    pokemon_alive = []
+    for pokemon in player.pokemon:
+        if pokemon.health > 0:
+            pokemon_alive.append(True)
+        else:
+            pokemon_alive.append(False)
+
+    if any(pokemon_alive): ## If any pokemon are alive
+        return True
+    else:
+        return False
