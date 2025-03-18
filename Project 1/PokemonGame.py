@@ -44,6 +44,7 @@ class Item:
         if self.stackable:
 
             if self.quantity > 0:
+                time.sleep(1.5)
                 print(f"You used a {self.name} on {pokemon.name}!")
                 if player: 
                     self.apply_effect(pokemon, player) ## only for pokeballs since we need to add captured pokemon to player list
@@ -52,13 +53,16 @@ class Item:
                 self.quantity -= 1
                 
                 if self.quantity == 0:
-                    print(f"You ran out of {self.name}")
+                    time.sleep(1.5)
+                    print(f"That was your last {self.name}!")
                     return True
             else:
+                time.sleep(1.5)
                 print(f"{self.name} is no longer available.")
                 return False
         else:
             self.apply_effect(pokemon)
+            time.sleep(1.5)
             print(f"{pokemon.name} used {self.name}!")
             return True
 
@@ -71,6 +75,7 @@ class HealItems(Item):
         pokemon.health += self.effect_value
         if pokemon.health > pokemon.health_cap:
             pokemon.health = pokemon.health_cap  # Prevent health from exceeding the max limit.
+        time.sleep(1.5)
         print(f"{pokemon.name} healed for {self.effect_value} health!")
 
 
@@ -88,7 +93,6 @@ class PokeBalls(Item):
 
         else:
             Count()
-
             print(f"The wild {pokemon.name} broke free!")
 
 def Count():
@@ -130,8 +134,6 @@ class Player():
         self.pokemon = pokemon
 
     def to_dict(self):      ## In order to save data, Cannot save class instance itself to json
-        print(self.inventory)
-        print(self.pokemon)
         return {
             "name": self.name,
             "gender": self.gender,
@@ -140,11 +142,12 @@ class Player():
         }
     
     def add_item(self, item, amount):
-
-        if item in self.inventory:
-            item.quantity += amount
-        else:
+        for items in self.inventory:
+            if item.name == items.name:
+                item.quantity += amount
+        if item not in self.inventory:
             self.inventory.append(item)
+        time.sleep(1.5)
         print(f"{item.name} has been added to your backpack.")
 
     def use_item(self, item_name, pokemon):
@@ -168,11 +171,12 @@ class Player():
 
     def display_inventory(self):
         if not self.inventory:
-            print("Your backpack is empty.")
+            print("\nYour backpack is empty.")
         else:
-            print("Backpack:")
+            print("\nBackpack:")
             counter = itertools.count(1)
             for item in self.inventory:
+                time.sleep(0.2)
                 print(f"{next(counter)}. {item.name} - Quantity: {item.quantity}")
     
 # Pokemon Class (for all Pokemon)
@@ -203,11 +207,14 @@ class Pokemon():
     def attack(self, target):
 
         while(True):
+            time.sleep(1.5)
             print("Choose a move:\n")
             for key, move in self.moves.items():
+                time.sleep(0.2)
                 print(f"{key}. {move[0]}")   ## Prints dictionary key and move name
             choice = input("Pick a move to use!")
             if choice not in self.moves:
+                time.sleep(0.2)
                 print("Invalid input")
             
             else:
@@ -220,32 +227,42 @@ class Pokemon():
         target.health -= total_damage  # Subtract the damage from target's health
 
         # Print out the results of the Attack
-        print(f"\n{self.name} attacks {target.name} with {self.moves[choice][0]} for: {total_damage:.2f} damage.")
-
+        time.sleep(1.5)
+        print(f"\n{self.name} attacks {target.name} with {self.moves[choice][0]} for: {total_damage} damage.")
         # Determine if there is an elemental advantage or disadvantage
         if multiplier > 1:
+            time.sleep(1.5)
             print("\nIt's super effective!")
         elif multiplier < 1:
+            time.sleep(1.5)
             print("\nIt's not very effective...")
 
         # Print the health of the target and the Attacker after the Attack
-        print(f"\n{target.name}'s health is now {target.health:.2f}.")
-        print(f"{self.name}'s health is {self.health:.2f}.\n")
+        time.sleep(1.5)
+        if not target.fainted():
+            print(f"\n{target.name}'s health is now {target.health}.")
+            time.sleep(1.5)
+            print(f"\n{self.name}'s health is {self.health}.")
+        else:
+            print(f"\n{target.name}'s health is now 0.")
+            time.sleep(1.5)
+            print(f"\n{self.name}'s health is {self.health}.")
 
     def run(self):                                                        ## Random chance to get away
         Probability = (self.health_cap - self.health) / self.health_cap   ## The less health, the better chance to get away    
 
-        if Probability > random.random():                                 ## random.random() returns random float between 1 and 0
-            print(f"{self.name} got away safely\n")
+        if Probability > random.random():      
+            time.sleep(1.5)                           ## random.random() returns random float between 1 and 0
+            print(f"\n{self.name} got away safely\n")
             return True
         else:
-            print(f"{self.name} couldn't get away\n")
+            time.sleep(1.5)
+            print(f"\n{self.name} couldn't get away\n")
             return False
     
     def fainted(self):
         if self.health <= 0:   ## Check if Pokemon fainted
             self.health = 0
-            print(f"{self.name} fainted")
             return True
         return False
     
@@ -261,18 +278,27 @@ class Wild(Pokemon):
         target.health  -= total_damage  # Subtract the damage from target's health
 
         # Print out the results of the Attack
-        print(f"\n{self.name} attacks {target.name} with {self.moves[enemy_move_name][0]} for: {total_damage:.2f} damage.")
-
+        time.sleep(1.5)
+        print(f"\n{self.name} attacks {target.name} with {self.moves[enemy_move_name][0]} for: {total_damage} damage.")
+        
         # Determine if there is an elemental advantage or disadvantage
         if multiplier > 1:
+            time.sleep(1.5)
             print("\nIt's super effective!")
         elif multiplier < 1:
+            time.sleep(1.5)
             print("\nIt's not very effective...")
 
         # Print the health of the target and the Attacker after the Attack
-        print(f"\n{target.name}'s health is now {target.health:.2f}.")
-        print(f"\n{self.name}'s health is {self.health:.2f}.")
-    
+        time.sleep(1.5)
+        if not target.fainted():
+            print(f"\n{target.name}'s health is now {target.health}.")
+            time.sleep(1.5)
+            print(f"\n{self.name}'s health is {self.health}.")
+        else:
+            print(f"\n{target.name}'s health is now 0.")
+            time.sleep(1.5)
+            print(f"\n{self.name}'s health is {self.health}.")
 
 ##Initialize some Pokemon
 WBulbasaur = Wild("Bulbasaur", 45, 45,     {1:("Tackle", 30), 2:("Vine Whip", 40)}, GRASS)
@@ -300,74 +326,100 @@ def Battle(Player, Pokemon, Enemy):
     flag = True
     Turn = True
     MainPokemon = Pokemon
+
+     
+
     while flag:
-        # Player's turn
-        print("\nChoose an action:")
-        print("1) Attack")
-        print("2) Use Item")
-        print("3) Run")
-        print("4) Swap Pokemon")
         
-        try:
-            decision = input("Enter the number of the action you desire:").strip()  # Get the player's choice as a number
-        except ValueError:
-            print("Not an option. Enter a number from 1-3.")
-            continue
-        
-        if decision == '1':  # Attack
-            MainPokemon.attack(Enemy)  # Use Attack method from Player's Pokemon
-            flag = not Enemy.fainted()  # Check if the enemy has fainted
-            Turn = False
+    # Confirm player has pokemon to fight with
+        if not CheckPokemonAlive(Player): # Check if any pokemon alive
+            time.sleep(1.5)
+            print("You can't fight! \nYou have no useable pokemon!")
+            flag = False
+            
+        elif MainPokemon.fainted() and CheckPokemonAlive(Player): ## If we have pokemon alive but main pokemon is dead, switch
+            time.sleep(1.5)
+            print(f"{MainPokemon.name} is fainted, choose a different pokemon to fight")
+            MainPokemon = SwapPokemon(Player.pokemon)
 
-        elif decision == '2':  # Item
-            # Show the player inventory and let the player choose an item to use
-            if not Player.inventory:
-                print("Your backpack is empty!")
-            else:
-                
-                Player.display_inventory()  # Display all items in inventory
-                item_name = input("Name the item you want to use ")
-                    
-                if item_name in Pokeball_names:
-                    player_pokemon_count = len(Player.pokemon)
-                    Player.use_item(item_name, Enemy) ## use on enemy if pokeball
+        if flag == True:
+            # Player's turn
+            time.sleep(1.5)
+            print("\nChoose an action:")
+            time.sleep(0.2)
+            print("1) Attack")
+            time.sleep(0.2)
+            print("2) Use Item")
+            time.sleep(0.2)
+            print("3) Run")
+            time.sleep(0.2)
+            print("4) Swap Pokemon")
 
-                    if player_pokemon_count != len(Player.pokemon): ##Check if player caught another pokemon
-                        Turn = True
-                        flag = False  ## Wild pokemon doesnt fight and leave battle functino
-                    else:
-                        Turn = False  ## Not caught, continue battle
-                        
-                elif item_name in Potion_names:
-                    Player.use_item(item_name, Pokemon) ## use on players pokemon
-                    Turn = False
-                
-                 
         
-        elif decision == '3':  # Run
-            if Pokemon.run():  # Use Run method from Player's Pokemon
-                flag = False
-            else:
+        
+            
+            try:
+                decision = input("Enter the number of the action you desire:").strip()  # Get the player's choice as a number
+            except ValueError:
+                time.sleep(1)
+                print("Not an option. Enter a number from 1-4.")
+                continue
+        
+            if decision == '1':  # Attack
+                MainPokemon.attack(Enemy)  # Use Attack method from Player's Pokemon
+                flag = not Enemy.fainted()  # Check if the enemy has fainted
                 Turn = False
 
-        elif decision == '4': # Swap Pokemon
-            print(Player.pokemon)
-            MainPokemon = SwapPokemon(Player.pokemon)
-        else:
-            print("Not an option, try again.")
-        
-        # Enemy's turn
-        if Turn == False and flag == True:  # Enemy's turn to attack
-            print(f"\n{Enemy.name}'s Turn:")
-            enemy_choice = random.random()  # Random chance for enemy to attack or run
+            elif decision == '2':  # Item
+                # Show the player inventory and let the player choose an item to use
+                if not Player.inventory:
+                    time.sleep(1)
+                    print("Your backpack is empty!")
+
+                else:     
+                    Player.display_inventory()  # Display all items in inventory
+                    item_name = input("Name the item you want to use ")
+                        
+                    if item_name in Pokeball_names:
+                        player_pokemon_count = len(Player.pokemon)
+                        Player.use_item(item_name, Enemy) ## use on enemy if pokeball
+
+                        if player_pokemon_count != len(Player.pokemon): ##Check if player caught another pokemon
+                            Turn = True
+                            flag = False  ## Wild pokemon doesnt fight and leave battle functino
+                        else:
+                            Turn = False  ## Not caught, continue battle
+                            
+                    elif item_name in Potion_names:
+                        Player.use_item(item_name, Pokemon) ## use on players pokemon
+                        Turn = False
+                    
+                    
             
-            if enemy_choice > 0.95:  # 10% chance to decide to run
-                flag = not Enemy.run()  # Enemy tries to run away
-                Turn = True
+            elif decision == '3':  # Run
+                if Pokemon.run():  # Use Run method from Player's Pokemon
+                    flag = False
+                else:
+                    Turn = False
+
+            elif decision == '4': # Swap Pokemon
+                MainPokemon = SwapPokemon(Player.pokemon)
             else:
-                Enemy.attack(MainPokemon)  # 90% chance for enemy to attack
-                flag = not Pokemon.fainted()  # Check if player has fainted
-                Turn = True
+                time.sleep(1)
+                print("Not an option, try again.")
+            
+            # Enemy's turn
+            if Turn == False and flag == True:  # Enemy's turn to attack
+                time.sleep(1.5)
+                print(f"\n{Enemy.name}'s Turn:")
+                enemy_choice = random.random()  # Random chance for enemy to attack or run
+                
+                if enemy_choice > 0.90:  # 10% chance to decide to run
+                    flag = not Enemy.run()  # Enemy tries to run away
+                    Turn = True
+                else:
+                    Enemy.attack(MainPokemon)  # 90% chance for enemy to attack
+                    Turn = True
 
 def TallGrass(Player, Pokemon):
     flag = True
@@ -382,9 +434,11 @@ def TallGrass(Player, Pokemon):
             AutoWalk(Player, Pokemon)
 
         elif Walk == '3':
+            time.sleep(1)
             print("You chose not to walk into the tall grass.")
             break  # Exit the loop if the player doesn't want to walk into the grass
         else:
+            time.sleep(1)
             print("Invalid input")
 
 
@@ -392,8 +446,10 @@ def Walks(Player, Pokemon):
 
     if random.random() < 0.1:  # 10% chance to encounter a Pokémon
         # Randomly select a wild Pokémon
+        PokeCenter(wild_pokemon_list) ## Confirm enemies have full health
         wild_pokemon = random.choice(wild_pokemon_list)
-        print(f"A wild {wild_pokemon.name} appeared!")
+        time.sleep(1.5)
+        print(f"\nA wild {wild_pokemon.name} appeared!")
 
                 # Start a battle with the selected wild Pokémon
         Battle(Player, Pokemon, wild_pokemon)
@@ -401,11 +457,9 @@ def Walks(Player, Pokemon):
     elif random.random() < 0.25:  # 25% to find item
         k = random.choices([1,2], weights = [85,15])[0] ##Chance to find two items
         found_item = random.choices(item_list, weights = item_chance, k = k)[0]  ## random item depending on how rare
-        print(f"You found {k} {found_item.name}\n")
+        time.sleep(1.5)
+        print(f"\nYou found {k} {found_item.name}")
         Player.add_item(found_item, k)     ## add to inventory
-
-    else:
-        print("You didn't encounter any Pokémon this time.")
 
 
 def AutoWalk(player, Pokemon):
@@ -421,16 +475,23 @@ def PokeCenter(pokemon_list):
 
 
 def SwapPokemon(pokemon_list):
+    time.sleep(1.5)
     print("\nThe pokemon you have right now are:")
 
     for i in range(len(pokemon_list)):
+                time.sleep(0.2)
                 print(f"{i+1}. {pokemon_list[i].name}")
     while(True):
-        choice = int(input("\nChoose a pokemon to pick as your main one")) - 1
-        if choice < 0 or choice >= len(pokemon_list):
+        try:
+            choice = int(input("\nChoose a pokemon to pick as your main one")) - 1
+            if choice < 0 or choice >= len(pokemon_list):
+                time.sleep(1)
+                print("invalid input")
+            else:
+                return pokemon_list[choice]
+        except ValueError:
+            time.sleep(1)
             print("invalid input")
-        else:
-            return pokemon_list[choice]
         
 def CheckPokemonAlive(player):
     pokemon_alive = []

@@ -1,6 +1,6 @@
 import PokemonGame as PG
 import json
-import itertools
+import time
 import os
 
 DATA = "Data.json" ## The file
@@ -161,8 +161,10 @@ def Save(Player):
 
     print("\n---Saving Game---")
     GameData[SaveSlot] = Player.to_dict()
+    time.sleep(2)
     SaveData(GameData)
     print("---Game Saved---")
+    time.sleep(1)
 
 def Menu(CurrentPlayer):      ## Show what attacks available, option to run, check inventory, switch pokemon, Pokemon on field
     global GameData
@@ -185,7 +187,7 @@ def Menu(CurrentPlayer):      ## Show what attacks available, option to run, che
             if PG.CheckPokemonAlive(CurrentPlayer):
                 PG.TallGrass(CurrentPlayer, MainPokemon)
             else:
-                print("You shouldn't go into the grass without any pokemon to fight\nHead to the pokecenter first!")
+                print("\nYou shouldn't go into the grass without any pokemon to fight\nHead to the pokecenter first!")
 
         elif option == '2':
             CurrentPlayer.display_inventory()
@@ -205,3 +207,5 @@ def Menu(CurrentPlayer):      ## Show what attacks available, option to run, che
             Play = False
             Save(CurrentPlayer)   ##Just in case 
             print("Thanks for playing!")
+
+        time.sleep(1.5)
