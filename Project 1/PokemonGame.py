@@ -2,6 +2,8 @@ import random
 import itertools
 import time
 
+## David Long and Jacob Juarez
+
 # Define Elements (powers for characters)
 ELECTRIC = "electric"
 WATER = "water"
@@ -142,11 +144,15 @@ class Player():
         }
     
     def add_item(self, item, amount):
+        check = True
         for items in self.inventory:
             if item.name == items.name:
+                check = False ##Verify if item was added
                 item.quantity += amount
-        if item not in self.inventory:
+
+        if check:  ##If item was not added, append to list
             self.inventory.append(item)
+    
         time.sleep(1.5)
         print(f"{item.name} has been added to your backpack.")
 
@@ -212,15 +218,24 @@ class Pokemon():
             for key, move in self.moves.items():
                 time.sleep(0.2)
                 print(f"{key}. {move[0]}")   ## Prints dictionary key and move name
+                move_count = int(key)
+            print("5. Exit")
             choice = input("Pick a move to use!")
-            if choice not in self.moves:
-                time.sleep(0.2)
-                print("Invalid input")
-            
-            else:
-                damage = self.moves[choice][1] ## Damage value of move
-                break
 
+            if choice == '5':
+                break
+            try:
+                if int(choice) not in range(move_count+1):
+                    print("Invalid input")
+                
+                else:
+                    damage = self.moves[choice][1] ## Damage value of move
+                    break
+            except ValueError:
+                print("Invalid input")
+
+        if choice == '5':
+            return False
         # Get the elemental multiplier (either amplifier or reducer)
         multiplier = self.get_elemental_multiplier(target.element)
         total_damage = damage * multiplier  # Calculate damage based on the multiplier
@@ -247,6 +262,7 @@ class Pokemon():
             print(f"\n{target.name}'s health is now 0.")
             time.sleep(1.5)
             print(f"\n{self.name}'s health is {self.health}.")
+        return True
 
     def run(self):                                                        ## Random chance to get away
         Probability = (self.health_cap - self.health) / self.health_cap   ## The less health, the better chance to get away    
@@ -366,9 +382,9 @@ def Battle(Player, Pokemon, Enemy):
                 continue
         
             if decision == '1':  # Attack
-                MainPokemon.attack(Enemy)  # Use Attack method from Player's Pokemon
-                flag = not Enemy.fainted()  # Check if the enemy has fainted
-                Turn = False
+                if MainPokemon.attack(Enemy):  # Use Attack method from Player's Pokemon
+                    flag = not Enemy.fainted()  # Check if the enemy has fainted
+                    Turn = False
 
             elif decision == '2':  # Item
                 # Show the player inventory and let the player choose an item to use
@@ -438,7 +454,6 @@ def TallGrass(Player, Pokemon):
             print("You chose not to walk into the tall grass.")
             break  # Exit the loop if the player doesn't want to walk into the grass
         else:
-            time.sleep(1)
             print("Invalid input")
 
 
