@@ -144,17 +144,18 @@ class Player():
         }
     
     def add_item(self, item, amount):
-        check = True
         for items in self.inventory:
             if item.name == items.name:
-                check = False ##Verify if item was added
                 item.quantity += amount
-
-        if check:  ##If item was not added, append to list
+                break
+        else:
             self.inventory.append(item)
     
         time.sleep(1.5)
-        print(f"{item.name} has been added to your backpack.")
+        if amount > 1:
+            print(f"{amount} {item.name}'s have been added to your backpack.")
+        else:
+            print(f"{item.name} has been added to your backpack.")
 
     def use_item(self, item_name, pokemon):
         while(True):
@@ -217,10 +218,10 @@ class Pokemon():
             print("Choose a move:\n")
             for key, move in self.moves.items():
                 time.sleep(0.2)
-                print(f"{key}. {move[0]}")   ## Prints dictionary key and move name
+                print(f"{key}. {move[0]}: {move[1]}")   ## Prints dictionary key and move name and damage
                 move_count = int(key)
             print("5. Exit")
-            choice = input("Pick a move to use!")
+            choice = input("Pick a move to use!").strip()
 
             if choice == '5':
                 break
@@ -317,21 +318,21 @@ class Wild(Pokemon):
             print(f"\n{self.name}'s health is {self.health}.")
 
 ##Initialize some Pokemon
-WBulbasaur = Wild("Bulbasaur", 45, 45,     {1:("Tackle", 30), 2:("Vine Whip", 40)}, GRASS)
-WSquirtle = Wild("Squirtle", 44, 44,       {1:("Tackle", 30), 2:("Water Jet", 40)}, WATER)
-WCharmander = Wild("Charmander", 39, 39,   {1:("Tackle", 30), 2:("Ember", 40)},     FIRE)
-WPikachu = Wild("Pikachu", 35, 35,         {1:("Tackle", 30), 2:("Spark", 40)},     ELECTRIC)
-WJigglypuff = Wild("Jigglypuff", 115, 115, {1:("Tackle", 30), 2:("Something", 40)}, NORMAL)
-WMeowth = Wild("Meowth", 40, 40,           {1:("Tackle", 30), 2:("Scratch", 40)}, NORMAL)
-WPsyduck = Wild("Psyduck", 50, 50,         {1:("Tackle", 30), 2:("Water Jet", 40)}, WATER)
-WEevee = Wild("Eevee", 55, 55,             {1:("Tackle", 30), 2:("Growl", 40)}, NORMAL)
-WGrowlithe = Wild("Growlithe", 55, 55,     {1:("Tackle", 30), 2:("Growl", 40)}, FIRE)
-WOddish = Wild("Oddish", 45, 45,           {1:("Tackle", 30), 2:("Vine Whip", 40)},  GRASS)
-WBellsprout = Wild("Bellsprout", 50, 50,   {1:("Tackle", 30), 2:("Vine Whip", 40)}, GRASS)
+WBulbasaur = Wild("Bulbasaur", 90, 90,     {'1':("Tackle", 30), '2':("Vine Whip", 40)}, GRASS)
+WSquirtle = Wild("Squirtle", 85, 85,       {'1':("Tackle", 30), '2':("Water Jet", 40)}, WATER)
+WCharmander = Wild("Charmander", 85, 85,   {'1':("Tackle", 30), '2':("Ember", 40)},     FIRE)
+WPikachu = Wild("Pikachu", 80, 80,         {'1':("Tackle", 30), '2':("Spark", 40)},     ELECTRIC)
+WJigglypuff = Wild("Jigglypuff", 95, 95,   {'1':("Tackle", 30), '2':("Body Slam", 40)}, NORMAL)
+WMeowth = Wild("Meowth", 80, 80,           {'1':("Tackle", 30), '2':("Scratch", 40)}, NORMAL)
+WPsyduck = Wild("Psyduck", 75, 75,         {'1':("Tackle", 30), '2':("Water Jet", 40)}, WATER)
+WEevee = Wild("Eevee", 85, 85,             {'1':("Tackle", 30), '2':("Growl", 40)}, NORMAL)
+WGrowlithe = Wild("Growlithe", 85, 85,     {'1':("Tackle", 30), '2':("Ember", 40)}, FIRE)
+WOddish = Wild("Oddish", 90, 90,           {'1':("Tackle", 30), '2':("Vine Whip", 40)},  GRASS)
+WBellsprout = Wild("Bellsprout", 75, 75,   {'1':("Tackle", 30), '2':("Vine Whip", 40)}, GRASS)
 
-Bulbasaur = Pokemon("Bulbasaur", 45, 45,     {1:("Tackle", 30), 2:("Vine Whip", 40)}, GRASS)
-Squirtle = Pokemon("Squirtle", 44, 44,       {1:("Tackle", 30), 2:("Water Jet", 40)}, WATER)
-Charmander = Pokemon("Charmander", 39, 39,   {1:("Tackle", 30), 2:("Ember", 40)},     FIRE)
+Bulbasaur = Pokemon("Bulbasaur", 90, 90,     {'1':("Tackle", 30), '2':("Vine Whip", 40), '3':("Razor Leaf", 45)}, GRASS)
+Squirtle = Pokemon("Squirtle", 85, 85,       {'1':("Tackle", 30), '2':("Water Jet", 40), '3':("Shell Smash", 45)}, WATER)
+Charmander = Pokemon("Charmander", 85, 85,   {'1':("Tackle", 30), '2':("Ember", 40),     '3':("Fire Spin", 45)},     FIRE)
 
 # List of possible wild Pokemon that can appear
 wild_pokemon_list = [WBulbasaur, WSquirtle, WCharmander, WPikachu, WJigglypuff, WMeowth, WPsyduck, WEevee, WGrowlithe, WOddish, WBellsprout]
@@ -495,7 +496,7 @@ def SwapPokemon(pokemon_list):
 
     for i in range(len(pokemon_list)):
                 time.sleep(0.2)
-                print(f"{i+1}. {pokemon_list[i].name}")
+                print(f"{i+1}. {pokemon_list[i].name}. health: {pokemon_list[i].health}")
     while(True):
         try:
             choice = int(input("\nChoose a pokemon to pick as your main one")) - 1

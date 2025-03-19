@@ -48,9 +48,9 @@ def Open():        ## Need to check save to see how many slots available
     while FirstPokemon not in temp:     ## Verify a valid pokemon was selected, Have to compare with temp, not wild_pokemon_list because comparing names or pokemon class instances
         FirstPokemon = input("\nPokemon not available, please choose another")
 
-    for i in range(len(PG.wild_pokemon_list)):
-        if FirstPokemon == PG.wild_pokemon_list[i].name:
-            PokemonClassInstance = PG.wild_pokemon_list[i]      ## assign class instance of chosen pokemon 
+    for i in range(len(PG.chosen_pokemon)):
+        if FirstPokemon == PG.chosen_pokemon[i].name:
+            PokemonClassInstance = PG.chosen_pokemon[i]      ## assign class instance of chosen pokemon 
             player_pokemon_list.append(PokemonClassInstance)       ## Players dictionary of pokemon class instances  ## First pokemon
 
     Player = PG.Player(Name, Gender, pokemon=[PokemonClassInstance]) ## initialize player
@@ -197,7 +197,6 @@ def Menu(CurrentPlayer):      ## Show what attacks available, option to run, che
             print("Your Pokemon have been fully healed!!\n")
 
         elif option == '4':
-            print(player_pokemon_list)
             MainPokemon = PG.SwapPokemon(player_pokemon_list)
 
         elif option == '5':
