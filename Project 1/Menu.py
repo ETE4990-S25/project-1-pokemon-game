@@ -105,6 +105,9 @@ def Load():
         if option in GameData: 
             print(f"\nLoading {GameData[option]['name']}'s save")
 
+            player_pokemon_list = []
+            player_inventory = []
+            
             CurrentPlayer = PG.Player(
                 GameData[option]['name'], 
                 GameData[option]['gender'], 
