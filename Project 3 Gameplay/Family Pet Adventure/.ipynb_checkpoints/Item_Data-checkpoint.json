@@ -1,0 +1,70 @@
+{
+	"items": [
+		{
+			"id": 0,
+			"name": "Empty Slot",
+			"description": "Empty Slot", 
+			"uses": "Empty Slot"
+		},
+		{
+			"id": 1,
+			"name": "Empty Slot",
+			"description": "Empty Slot", 
+			"uses": "Empty Slot"
+		},
+		{
+			"id": 2,
+			"name": "Empty Slot",
+			"description": "Empty Slot", 
+			"uses": "Empty Slot"
+		},
+		{
+			"id": 3,
+			"name": "Empty Slot",
+			"description": "Empty Slot", 
+			"uses": "Empty Slot"
+		},
+		{
+			"id": 4,
+			"name": "Empty Slot",
+			"description": "Empty Slot", 
+			"uses": "Empty Slot"
+		},
+		{
+			"id": 5,
+			"name": "Empty Slot",
+			"description": "Empty Slot", 
+			"uses": "Empty Slot"
+		},
+		{
+			"id": 6,
+			"name": "Empty Slot",
+			"description": "Empty Slot", 
+			"uses": "Empty Slot"
+		},
+		{
+			"id": 7,
+			"name": "Empty Slot",
+			"description": "Empty Slot", 
+			"uses": "Empty Slot"
+		},
+		{
+			"id": 8,
+			"name": "Empty Slot",
+			"description": "Empty Slot", 
+			"uses": "Empty Slot"
+		},
+		{
+			"id": 9,
+			"name": "Empty Slot",
+			"description": "Empty Slot", 
+			"uses": "Empty Slot"
+		},
+		{
+			"id": 10,
+			"name": "Empty Slot",
+			"description": "Empty Slot", 
+			"uses": "Empty Slot"
+		}
+	]
+}
