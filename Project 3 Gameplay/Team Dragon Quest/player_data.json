@@ -1,0 +1,10 @@
+{
+    "name": "Anthony",
+    "level": 9,
+    "experience": 50,
+    "health": 74,
+    "max_health": 74,
+    "attack": 45,
+    "defense": 40,
+    "weapon": "Falcon Blade"
+}

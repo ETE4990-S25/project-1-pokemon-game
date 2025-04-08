@@ -1,0 +1,70 @@
+{
+	"items": [
+		{
+			"id": 0,
+			"name": "Food Bowl",
+			"description": "Empty food bowl to make a loud sound.", 
+			"uses": "Empty Slot"
+		},
+		{
+			"id": 1,
+			"name": "Glasses.",
+			"description": "Gives night vision.", 
+			"uses": "Empty Slot"
+		},
+		{
+			"id": 2,
+			"name": "Shoes",
+			"description": "Helps player to super jump.", 
+			"uses": "Empty Slot"
+		},
+		{
+			"id": 3,
+			"name": "Yarn",
+			"description": "Used as a net to get to the key.", 
+			"uses": "Empty Slot"
+		},
+		{
+			"id": 4,
+			"name": "Brick",
+			"description": "Helps to move a pile of bricks.", 
+			"uses": "Empty Slot"
+		},
+		{
+			"id": 5,
+			"name": "Phone",
+			"description": "Hides phone to create a distraction.", 
+			"uses": "Empty Slot"
+		},
+		{
+			"id": 6,
+			"name": "Laptop",
+			"description": "Used to turn off pet cam.", 
+			"uses": "Empty Slot"
+		},
+		{
+			"id": 7,
+			"name": "Empty Slot",
+			"description": "Empty Slot", 
+			"uses": "Empty Slot"
+		},
+		{
+			"id": 8,
+			"name": "Empty Slot",
+			"description": "Empty Slot", 
+			"uses": "Empty Slot"
+		},
+		{
+			"id": 9,
+			"name": "Empty Slot",
+			"description": "Empty Slot", 
+			"uses": "Empty Slot"
+		},
+		{
+			"id": 10,
+			"name": "Empty Slot",
+			"description": "Empty Slot", 
+			"uses": "Empty Slot"
+		}
+	]
+}

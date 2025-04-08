@@ -1,0 +1,13 @@
+{
+    "pet_name": "Bob",
+    "pet_type": "Dog",
+    "jump_stat": 1.0,
+    "sneak_stat": 1.0,
+    "inventory": [
+        {
+            "name": null,
+            "uses": 5,
+            "description": null
+        }
+    ]
+}
