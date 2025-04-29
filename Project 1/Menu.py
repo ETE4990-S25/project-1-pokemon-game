@@ -1,4 +1,5 @@
 import PokemonGame as PG
+import PokemonAndItems as PI
 import json
 import time
 import os
@@ -19,7 +20,7 @@ def load_data():
 
 def save_data(data):
     with open(DATA, 'w') as file:
-        json.dump(data, file)
+        json.dump(data, file, indent=4)
 
 def Start():
     print("\n1. New\n2. Load")
@@ -33,25 +34,25 @@ def Open():        ## Need to check save to see how many slots available
     global GameData
     global SaveSlot ##Global variables called inside function to be modified
     global player_pokemon_list
-    print("\n---Welcome to Pokemon---\n")
+    print("\n---Welcome to Pokemon---  \n---Do you have what it takes to be a trainer?---\n")
 
     Name = input("What is your name?").strip().capitalize()
     Gender = input("Are you a boy or a girl?") ##Never used in the game, player can enter whatever they want because we are inclusive :) (also just here because its asked in pokemon)
     
     print("Choose from the following:\n")
     temp = []
-    for i in range(len(PG.chosen_pokemon)): ## For me chosen_pokemon is a variable/list
-        print(PG.chosen_pokemon[i].name)
-        temp.append(PG.chosen_pokemon[i].name) ## temp list of pokemon names to compare later
+    for i in range(len(PI.chosen_pokemon)): ## For me chosen_pokemon is a variable/list
+        print(PI.chosen_pokemon[i].name)
+        temp.append(PI.chosen_pokemon[i].name) ## temp list of pokemon names to compare later
 
     FirstPokemon = input("Choose a pokemon from the list:")
 
     while FirstPokemon not in temp:     ## Verify a valid pokemon was selected, Have to compare with temp, not wild_pokemon_list because comparing names or pokemon class instances
         FirstPokemon = input("\nPokemon not available, please choose another")
 
-    for i in range(len(PG.chosen_pokemon)):
-        if FirstPokemon == PG.chosen_pokemon[i].name:
-            PokemonClassInstance = PG.chosen_pokemon[i]      ## assign class instance of chosen pokemon 
+    for i in range(len(PI.chosen_pokemon)):
+        if FirstPokemon == PI.chosen_pokemon[i].name:
+            PokemonClassInstance = PI.chosen_pokemon[i]      ## assign class instance of chosen pokemon 
             player_pokemon_list.append(PokemonClassInstance)       ## Players dictionary of pokemon class instances  ## First pokemon
 
     Player = PG.Player(Name, Gender, pokemon=[PokemonClassInstance]) ## initialize player
@@ -110,7 +111,7 @@ def Load():
             player_pokemon_list = []
             player_inventory = []
             
-            CurrentPlayer = PG.Player(
+            CurrentPlayer = PI.Player(
                 GameData[SaveSlot]['name'], 
                 GameData[SaveSlot]['gender'], 
                 GameData[SaveSlot]['bag'], 
@@ -119,7 +120,7 @@ def Load():
             
             for i in range(len(GameData[SaveSlot]["team"])): ##Length of team list ## How many pokemon to innitialize
 
-                player_pokemon_list.append(PG.Pokemon(   ## A dictionary of all player pokemon reinnitialized
+                player_pokemon_list.append(PI.Pokemon(   ## A dictionary of all player pokemon reinnitialized
                     
                     GameData[SaveSlot]["team"][i]['name'],
                     GameData[SaveSlot]["team"][i]['health'],
@@ -130,18 +131,18 @@ def Load():
 
             for i in range(len(GameData[SaveSlot]["bag"])): 
                 
-                if GameData[SaveSlot]["bag"][i]['name'] in PG.Pokeball_list:
+                if GameData[SaveSlot]["bag"][i]['name'] in PI.Pokeball_list:
 
-                    player_inventory.append(PG.PokeBalls(
+                    player_inventory.append(PI.PokeBalls(
 
                         GameData[SaveSlot]["bag"][i]['name'],
                         GameData[SaveSlot]["bag"][i]['effect'],
                         GameData[SaveSlot]["bag"][i]['stack'],
                         GameData[SaveSlot]["bag"][i]['amount']
                     ))
-                elif GameData[SaveSlot]["bag"][i]['name'] in PG.Potion_names:
+                elif GameData[SaveSlot]["bag"][i]['name'] in PI.Potion_names:
                     
-                     player_inventory.append(PG.HealItems(
+                     player_inventory.append(PI.HealItems(
 
                         GameData[SaveSlot]["bag"][i]['name'],
                         GameData[SaveSlot]["bag"][i]['effect'],
@@ -175,6 +176,9 @@ def Menu(CurrentPlayer):      ## Show what attacks available, option to run, che
     global GameData
     global SaveSlot
     global player_pokemon_list
+
+    if not PG.CheckPokemonAlive(CurrentPlayer):
+        player_pokemon_list = PG.PokeCenter(player_pokemon_list)
 
     MainPokemon = player_pokemon_list[0] ## First pokemon in team list by default
     Play = True
