@@ -1,1 +1,104 @@
-{"1": {"name": "David", "gender": "boy", "bag": [{"name": "Potion", "effect": 20, "stack": true, "amount": 5}, {"name": "Super Potion", "effect": 40, "stack": true, "amount": 3}, {"name": "Hyper Potion", "effect": 60, "stack": true, "amount": 5}, {"name": "Max Potion", "effect": 100, "stack": true, "amount": 2}, {"name": "Ultra Ball", "effect": 0.8, "stack": true, "amount": 4}, {"name": "Poke Ball", "effect": 0.6, "stack": true, "amount": 6}, {"name": "Great Ball", "effect": 0.7, "stack": true, "amount": 6}], "team": [{"name": "Charmander", "health": 85, "health_cap": 85, "moves": {"1": ["Tackle", 30], "2": ["Ember", 40], "3": ["Fire Spin", 45]}, "element": "fire"}, {"name": "Bulbasaur", "health": 50, "health_cap": 90, "moves": {"1": ["Tackle", 30], "2": ["Vine Whip", 40]}, "element": "grass"}, {"name": "Growlithe", "health": 85, "health_cap": 85, "moves": {"1": ["Tackle", 30], "2": ["Ember", 40]}, "element": "fire"}]}}
+{
+    "1": {
+        "name": "David",
+        "gender": "boy",
+        "bag": [
+            {
+                "name": "Potion",
+                "effect": 20,
+                "stack": true,
+                "amount": 5
+            },
+            {
+                "name": "Super Potion",
+                "effect": 40,
+                "stack": true,
+                "amount": 3
+            },
+            {
+                "name": "Hyper Potion",
+                "effect": 60,
+                "stack": true,
+                "amount": 2
+            },
+            {
+                "name": "Max Potion",
+                "effect": 100,
+                "stack": true,
+                "amount": 1
+            },
+            {
+                "name": "Great Ball",
+                "effect": 0.7,
+                "stack": true,
+                "amount": 1
+            }
+        ],
+        "team": [
+            {
+                "name": "Charmander",
+                "health": 0,
+                "health_cap": 85,
+                "moves": {
+                    "1": [
+                        "Tackle",
+                        30
+                    ],
+                    "2": [
+                        "Ember",
+                        40
+                    ],
+                    "3": [
+                        "Fire Spin",
+                        45
+                    ]
+                },
+                "element": "fire"
+            },
+            {
+                "name": "Bulbasaur",
+                "health": 69.0,
+                "health_cap": 90,
+                "moves": {
+                    "1": [
+                        "Tackle",
+                        30
+                    ],
+                    "2": [
+                        "Vine Whip",
+                        40
+                    ]
+                },
+                "element": "grass"
+            },
+            {
+                "name": "Mewtwo",
+                "health": 1000,
+                "health_cap": 1000,
+                "moves": {
+                    "1": [
+                        "Future Sight",
+                        200
+                    ]
+                },
+                "element": "normal"
+            },
+            {
+                "name": "Pikachu",
+                "health": 80,
+                "health_cap": 80,
+                "moves": {
+                    "1": [
+                        "Tackle",
+                        30
+                    ],
+                    "2": [
+                        "Spark",
+                        40
+                    ]
+                },
+                "element": "electric"
+            }
+        ]
+    }
+}

@@ -151,8 +151,9 @@ class Player():
             if item.name == items.name:
                 item.quantity += amount
                 break
-            else:
-                self.inventory.append(item)
+        else:
+            item.quantity = amount
+            self.inventory.append(item)
     
         time.sleep(1.5)
         if amount > 1:
@@ -184,7 +185,6 @@ class Player():
             print("\nYour backpack is empty.")
         else:
             print("\nBackpack:")
-            counter = itertools.count(1)
             pairs = zip(itertools.count(start=1), self.inventory)
             for num, item in pairs:
                 time.sleep(0.2)

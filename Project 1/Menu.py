@@ -55,7 +55,7 @@ def Open():        ## Need to check save to see how many slots available
             PokemonClassInstance = PI.chosen_pokemon[i]      ## assign class instance of chosen pokemon 
             player_pokemon_list.append(PokemonClassInstance)       ## Players dictionary of pokemon class instances  ## First pokemon
 
-    Player = PG.Player(Name, Gender, pokemon=[PokemonClassInstance]) ## initialize player
+    Player = PI.Player(Name, Gender, pokemon=[PokemonClassInstance]) ## initialize player
 
     GameData = load_data()    ## Load already saved data
 
@@ -142,7 +142,7 @@ def Load():
                     ))
                 elif GameData[SaveSlot]["bag"][i]['name'] in PI.Potion_names:
                     
-                     player_inventory.append(PI.HealItems(
+                     player_inventory.append(PI.Heal_Items(
 
                         GameData[SaveSlot]["bag"][i]['name'],
                         GameData[SaveSlot]["bag"][i]['effect'],

@@ -1,5 +1,6 @@
 import random
 import time
+import itertools
 import PokemonAndItems as PI
 
 
@@ -32,9 +33,9 @@ def Battle(Player, Pokemon, Enemy):
             time.sleep(1.5)
             print("\nChoose an action:")
             options = [ "1) Attack", "2) Use Item", "3) Run", "4) Swap Pokemon"]
-            for i in options:
+            for option in options:
                 time.sleep(0.2)
-                print(options[i])
+                print(option)
 
         
         
@@ -59,23 +60,37 @@ def Battle(Player, Pokemon, Enemy):
 
                 else:     
                     Player.display_inventory()  # Display all items in inventory
+                    pairs = list(zip(itertools.count(start=1), Player.inventory))
+                    valid_numbers = [num for num, _ in pairs]
 
-                    item_name = input("Name the item you want to use ")
-                        
-                    if item_name in PI.Pokeball_names:
-                        player_pokemon_count = len(Player.pokemon)
-                        Player.use_item(item_name, Enemy) ## use on enemy if pokeball
+                    try:
+                        item_num = int(input("Which item do you want to use ").strip())
 
-                        if player_pokemon_count != len(Player.pokemon): ##Check if player caught another pokemon
-                            Turn = True
-                            flag = False  ## Wild pokemon doesnt fight and leave battle functino
+                        if item_num not in valid_numbers: ##Check the count values and compare
+                            print("Invalid input")
+
                         else:
-                            Turn = False  ## Not caught, continue battle
+                            for num, item in pairs:
+                                if num == item_num:
+                                    chosen_item = item
+                                    break
                             
-                    elif item_name in PI.Potion_names:
-                        Player.use_item(item_name, Pokemon) ## use on players pokemon
-                        Turn = False
+                        if chosen_item.name in PI.Pokeball_names:
+                            player_pokemon_count = len(Player.pokemon)
+                            Player.use_item(chosen_item.name, Enemy) ## use on enemy if pokeball
+
+                            if player_pokemon_count != len(Player.pokemon): ##Check if player caught another pokemon / if pokeball was successful
+                                Turn = True
+                                flag = False  ## Wild pokemon is caught so it doesnt fight and we leave battle functino
+                            else:
+                                Turn = False  ## Not caught, continue battle
+                                
+                        elif chosen_item.name in PI.Potion_names:
+                            Player.use_item(chosen_item.name, Pokemon) ## use on players pokemon if heal item
+                            Turn = False
                     
+                    except ValueError:
+                        print("Invalid Input, please enter a number")
                     
             
             elif decision == '3':  # Run
@@ -103,25 +118,6 @@ def Battle(Player, Pokemon, Enemy):
                     Enemy.attack(MainPokemon)  # 90% chance for enemy to attack
                     Turn = True
 
-def TallGrass(Player, Pokemon):
-    flag = True
-    while flag:
-
-        Walk = input("\n1. Walk once\n2.Walk 10 times\n3.Exit walk\n")
-
-        if Walk == '1':
-            Walks(Player, Pokemon)
-
-        elif Walk == '2':
-            AutoWalk(Player, Pokemon)
-
-        elif Walk == '3':
-            time.sleep(1)
-            print("You chose not to walk into the tall grass.")
-            break  # Exit the loop if the player doesn't want to walk into the grass
-        else:
-            print("Invalid input")
-
 
 def Walks(Player, Pokemon):
 
@@ -143,9 +139,28 @@ def Walks(Player, Pokemon):
         Player.add_item(found_item, k)     ## add to inventory
 
 
-def AutoWalk(player, Pokemon):
-    for i in range(10):
-        Walks(player, Pokemon)
+def TallGrass(Player, Pokemon):
+    """Pass in the Player and the active pokemon
+    here you can walk in tall grass and find items or battle wild pokemon"""
+    flag = True
+    while flag:
+
+        Walk = input("\n1. Walk once\n2.Walk 10 times\n3.Exit walk\n")
+
+        if Walk == '1':
+            Walks(Player, Pokemon)
+
+        elif Walk == '2':
+            for i in range(10):
+                Walks(Player, Pokemon)
+
+        elif Walk == '3':
+            time.sleep(1)
+            print("You chose not to walk into the tall grass.")
+            break  # Exit the loop if the player doesn't want to walk into the grass
+        else:
+            print("Invalid input")
+
 
 def PokeCenter(pokemon_list):
 
@@ -156,7 +171,6 @@ def PokeCenter(pokemon_list):
 
 
 def SwapPokemon(pokemon_list):
-    time.sleep(1.5)
     print("\nThe pokemon you have right now are:")
 
     for i in range(len(pokemon_list)):
@@ -166,7 +180,6 @@ def SwapPokemon(pokemon_list):
         try:
             choice = int(input("\nChoose a pokemon to pick as your main one")) - 1
             if choice < 0 or choice >= len(pokemon_list):
-                time.sleep(1)
                 print("invalid input")
             else:
                 return pokemon_list[choice]
@@ -175,14 +188,4 @@ def SwapPokemon(pokemon_list):
             print("invalid input")
         
 def CheckPokemonAlive(player):
-    pokemon_alive = []
-    for pokemon in player.pokemon:
-        if pokemon.health > 0:
-            pokemon_alive.append(True)
-        else:
-            pokemon_alive.append(False)
-
-    if any(pokemon_alive): ## If any pokemon are alive
-        return True
-    else:
-        return False
+    return any(pokemon.health > 0 for pokemon in player.pokemon)
